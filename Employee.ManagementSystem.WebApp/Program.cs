@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Employee.ManagementSystem.WebApp.Data;
+using Employee.ManagementSystem.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+
+// Add Db
+builder.Services.AddDbContext<EmployeeContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("EmployeeContext")));
 
 var app = builder.Build();
 
