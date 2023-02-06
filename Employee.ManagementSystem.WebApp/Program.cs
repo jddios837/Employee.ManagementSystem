@@ -1,3 +1,4 @@
+using Azure.Identity;
 using Employee.ManagementSystem.WebApp.Data;
 using Employee.ManagementSystem.Data;
 using Employee.ManagementSystem.WebApp.Data.Employee.Interfaces;
@@ -5,6 +6,18 @@ using Employee.ManagementSystem.WebApp.Data.Employee.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+// Access Key Vault
+var credentialOptions = new DefaultAzureCredentialOptions()
+{
+    ManagedIdentityClientId  = builder.Configuration["KeyVault:AzureADManagedIdentityClientId"],
+    ExcludeVisualStudioCredential = true
+};
+
+builder.Configuration.AddAzureKeyVault(
+    new Uri($"https://{builder.Configuration["KeyVault:Vault"]}.vault.azure.net/"), 
+    new DefaultAzureCredential(credentialOptions));
 
 // Add Db
 builder.Services.AddDbContext<EmployeeContext>(options =>
@@ -25,6 +38,10 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+
+var movieApiKey = builder.Configuration["ConnectionStrings:EmployeeContext"];
+Console.WriteLine("MOVIE KEY {0}", movieApiKey);
 
 app.UseHttpsRedirection();
 
