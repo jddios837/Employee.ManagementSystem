@@ -1,0 +1,57 @@
+﻿@page "/employees"
+@using global::Employee.ManagementSystem.Core.Models
+@using global::Employee.ManagementSystem.WebApp.Data.Employee.Interfaces
+
+@inject IEmployeeService Service
+
+<h3>List of Employees</h3>
+
+@if (_employees == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Date Of Birth</th>
+            <th>Department</th>
+            <th>Options</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var employee in _employees)
+        {
+            <tr>
+                <td>@employee.Name</td>
+                <td>@employee.Email</td>
+                <td>@employee.DateOfBirth.ToString()</td>
+                <td>@employee.Department.Name</td>
+                <td>
+                    <button class="btn btn-info">
+                        Edit
+                    </button>
+                    <button class="btn btn-danger">
+                        Remove
+                    </button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IList<Employee> _employees;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _employees = await Service.GetAll();
+    }
+
+}
