@@ -6,6 +6,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Employee.ManagementSystem.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Employee.ManagementSystem.Data", "Employee.ManagementSystem.Data\Employee.ManagementSystem.Data.csproj", "{617B3ED1-DE27-41EC-AE05-1D6208FCABA8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Employee.ManagementSystem.Shared", "Employee.ManagementSystem.Shared\Employee.ManagementSystem.Shared.csproj", "{D1D777AC-4A4F-4E5D-8DE4-B0058F871D77}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{AC596D83-F663-41E1-813F-D7E93A49E3AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Employee.ManagementSystem.WebApp.UnitTests", "test\Employee.ManagementSystem.WebApp.UnitTests\Employee.ManagementSystem.WebApp.UnitTests.csproj", "{EEE1761A-5470-48B3-9BF2-632B420B9119}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +30,16 @@ Global
 		{617B3ED1-DE27-41EC-AE05-1D6208FCABA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{617B3ED1-DE27-41EC-AE05-1D6208FCABA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{617B3ED1-DE27-41EC-AE05-1D6208FCABA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1D777AC-4A4F-4E5D-8DE4-B0058F871D77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1D777AC-4A4F-4E5D-8DE4-B0058F871D77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1D777AC-4A4F-4E5D-8DE4-B0058F871D77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1D777AC-4A4F-4E5D-8DE4-B0058F871D77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEE1761A-5470-48B3-9BF2-632B420B9119}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEE1761A-5470-48B3-9BF2-632B420B9119}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEE1761A-5470-48B3-9BF2-632B420B9119}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEE1761A-5470-48B3-9BF2-632B420B9119}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EEE1761A-5470-48B3-9BF2-632B420B9119} = {AC596D83-F663-41E1-813F-D7E93A49E3AE}
 	EndGlobalSection
 EndGlobal
