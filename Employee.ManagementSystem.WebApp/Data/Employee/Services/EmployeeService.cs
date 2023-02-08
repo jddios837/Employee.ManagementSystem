@@ -1,6 +1,6 @@
 ﻿using Employee.ManagementSystem.Data;
 using Employee.ManagementSystem.WebApp.Data.Employee.Interfaces;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace Employee.ManagementSystem.WebApp.Data.Employee.Services;
 

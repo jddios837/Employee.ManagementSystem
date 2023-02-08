@@ -1,9 +1,6 @@
 using Azure.Identity;
 using Employee.ManagementSystem.WebApp.Data;
-using Employee.ManagementSystem.Data;
-using Employee.ManagementSystem.WebApp.Data.Employee.Interfaces;
 using Employee.ManagementSystem.WebApp.Data.Employee.Services;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +25,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 
 var app = builder.Build();
 

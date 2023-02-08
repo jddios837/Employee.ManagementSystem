@@ -1,11 +1,14 @@
 ﻿@page "/employees"
-@using global::Employee.ManagementSystem.Core.Models
-@using global::Employee.ManagementSystem.WebApp.Data.Employee.Interfaces
+@using Employee = global::Employee.ManagementSystem.Core.Models.Employee
 
 @inject IEmployeeService Service
 
 <h3>List of Employees</h3>
-
+<hr/>
+<NavLink class="btn btn-primary" href="/employee/new">
+    New Employee
+</NavLink>
+<hr/>
 @if (_employees == null)
 {
     <p>

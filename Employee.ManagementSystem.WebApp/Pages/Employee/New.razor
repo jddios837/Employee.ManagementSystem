@@ -1,0 +1,68 @@
+﻿@page "/Employee/New"
+@using global::Employee.ManagementSystem.Shared.Employee.InputModels
+@using global::Employee.ManagementSystem.Core.Models
+
+@inject IDepartmentService Service
+
+<h3>New</h3>
+
+<div class="row">
+    <div class="col">
+        <NavLink class="btn btn-primary" href="/employees">
+            Cancel
+        </NavLink>
+    </div>
+</div>
+<EditForm Model="@CreateEmployeeInputModel" OnValidSubmit="SubmitValidForm">
+    <FluentValidationValidator/>
+    <div class="form-group">
+        <label class="col-form-label">Name:</label>
+        <div class="col-md-6">
+            <InputText @bind-Value="@CreateEmployeeInputModel.Name"></InputText>
+            <ValidationMessage For="() => CreateEmployeeInputModel.Name"></ValidationMessage>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-form-label">Email:</label>
+        <div class="col-md-6">
+            <InputText @bind-Value="@CreateEmployeeInputModel.Email"></InputText>
+            <ValidationMessage For="() => CreateEmployeeInputModel.Email"></ValidationMessage>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-form-label">Department:</label>
+        <div class="col-md-6">
+            <InputSelect @bind-Value="CreateEmployeeInputModel.DepartmentId">
+                <option value="">Select classification ...</option>
+                @foreach (var d in _departments)  
+                {  
+                    <option value="@d.Id">@d.Name</option>  
+                }
+            </InputSelect>
+            <ValidationMessage For="() => CreateEmployeeInputModel.DepartmentId"></ValidationMessage>
+        </div>
+    </div>
+    <br/>
+    <button class="btn btn-success" type="submit">Save</button>
+</EditForm>
+
+<label>@message</label>
+
+@code {
+    CreateEmployeeInputModel CreateEmployeeInputModel = new CreateEmployeeInputModel();
+    IList<Department> _departments = new List<Department>();
+    
+    string message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _departments = await Service.GetAll();
+    }
+
+    void SubmitValidForm()
+    {
+        message = "All is ready!";
+    }
+    
+    
+}
