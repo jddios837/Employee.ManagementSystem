@@ -12,9 +12,9 @@ public class Employee
     
     [Required]
     [StringLength(50)]
-    public string Email { get; set; }
+    public string Email { get; set; } = null!;
 
     public DateTime? DateOfBirth { get; set; }
     
-    public virtual Department Department { get; set; }
+    public virtual Department Department { get; set; } = null!;
 }

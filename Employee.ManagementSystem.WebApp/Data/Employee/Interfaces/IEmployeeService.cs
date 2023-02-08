@@ -3,4 +3,8 @@
 public interface IEmployeeService
 {
     public Task<IList<Core.Models.Employee>> GetAll();
+
+    public Task<int> Create(Core.Models.Employee employee);
+    
+    public Task<Core.Models.Employee> Delete(int employeeId);
 }

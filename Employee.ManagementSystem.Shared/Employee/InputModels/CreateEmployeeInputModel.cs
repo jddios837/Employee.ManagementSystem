@@ -2,11 +2,11 @@
 
 public class CreateEmployeeInputModel
 {
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
     
-    public string Email { get; set; }
+    public string Email { get; set; } = null!;
     
-    public DateOnly DateOfBirth { get; set; }
+    public DateTime DateOfBirth { get; set; } = DateTime.Now;
     
     public int DepartmentId { get; set; }
 }

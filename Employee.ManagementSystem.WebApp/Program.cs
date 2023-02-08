@@ -1,6 +1,11 @@
+using AutoMapper;
 using Azure.Identity;
+using Employee.ManagementSystem.Data.Employee.AutoMapperProfiles;
 using Employee.ManagementSystem.WebApp.Data;
 using Employee.ManagementSystem.WebApp.Data.Employee.Services;
+using Radzen;
+
+// using Syncfusion.Blazor;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,9 +28,20 @@ builder.Services.AddDbContext<EmployeeContext>(options =>
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+// builder.Services.AddSyncfusionBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<DialogService>();
+
+// Add Mappers
+var mappingConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new EmployeeMapperProfile());
+});
+var mapper = mappingConfig.CreateMapper();
+
+builder.Services.AddSingleton(mapper);
 
 var app = builder.Build();
 

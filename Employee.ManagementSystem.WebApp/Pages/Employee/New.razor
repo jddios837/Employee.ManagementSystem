@@ -1,8 +1,13 @@
 ﻿@page "/Employee/New"
 @using global::Employee.ManagementSystem.Shared.Employee.InputModels
 @using global::Employee.ManagementSystem.Core.Models
+@using AutoMapper
 
-@inject IDepartmentService Service
+@inject NavigationManager NavManager
+@inject IDepartmentService ServiceDeparment
+@inject IEmployeeService ServiceEmployee
+
+
 
 <h3>New</h3>
 
@@ -18,27 +23,47 @@
     <div class="form-group">
         <label class="col-form-label">Name:</label>
         <div class="col-md-6">
-            <InputText @bind-Value="@CreateEmployeeInputModel.Name"></InputText>
+            <RadzenTextBox 
+                @bind-Value="@CreateEmployeeInputModel.Name" 
+                Class="w-100" />
             <ValidationMessage For="() => CreateEmployeeInputModel.Name"></ValidationMessage>
         </div>
     </div>
     <div class="form-group">
         <label class="col-form-label">Email:</label>
         <div class="col-md-6">
-            <InputText @bind-Value="@CreateEmployeeInputModel.Email"></InputText>
+            <RadzenTextBox 
+                @bind-Value="@CreateEmployeeInputModel.Email" 
+                Class="w-100" />
             <ValidationMessage For="() => CreateEmployeeInputModel.Email"></ValidationMessage>
         </div>
     </div>
     <div class="form-group">
+            <label class="col-form-label">Date of Birth:</label>
+        <div class="col-md-6">
+            <RadzenDatePicker 
+                TValue="DateTime" 
+                @bind-Value=@CreateEmployeeInputModel.DateOfBirth
+                Min="@MinDate"
+                Max="@MaxDate"
+                DateFormat="d"
+                ShowTime="false"
+                Class="w-100"/>
+            <ValidationMessage For="() => CreateEmployeeInputModel.DateOfBirth"></ValidationMessage>
+        </div>
+        </div>
+    <div class="form-group">
         <label class="col-form-label">Department:</label>
         <div class="col-md-6">
-            <InputSelect @bind-Value="CreateEmployeeInputModel.DepartmentId">
-                <option value="">Select classification ...</option>
-                @foreach (var d in _departments)  
-                {  
-                    <option value="@d.Id">@d.Name</option>  
-                }
-            </InputSelect>
+            <RadzenDropDown 
+                AllowClear="true" 
+                @bind-Value="@CreateEmployeeInputModel.DepartmentId"
+                TValue="int" 
+                Class="w-100" 
+                Data=@_departments
+                TextProperty="Name" 
+                ValueProperty="Id"
+                 />
             <ValidationMessage For="() => CreateEmployeeInputModel.DepartmentId"></ValidationMessage>
         </div>
     </div>
@@ -46,22 +71,28 @@
     <button class="btn btn-success" type="submit">Save</button>
 </EditForm>
 
-<label>@message</label>
-
 @code {
+    [Inject]
+    public IMapper Mapper { get; set; } = null!;
+
     CreateEmployeeInputModel CreateEmployeeInputModel = new CreateEmployeeInputModel();
     IList<Department> _departments = new List<Department>();
     
-    string message;
-
+    DateTime MinDate = new DateTime(1900,DateTime.Now.Month,01);
+    DateTime MaxDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 27);
+    
     protected override async Task OnInitializedAsync()
     {
-        _departments = await Service.GetAll();
+        _departments = await ServiceDeparment.GetAll();
     }
 
-    void SubmitValidForm()
+    async void SubmitValidForm()
     {
-        message = "All is ready!";
+        Employee NewEmployee = new Employee();
+        Mapper.Map(CreateEmployeeInputModel, NewEmployee);
+        await ServiceEmployee.Create(NewEmployee);
+        
+        NavManager.NavigateTo("/employees");
     }
     
     

@@ -1,7 +1,10 @@
 ﻿@page "/employees"
+@inject DialogService DialogService
+@implements IDisposable
 @using Employee = global::Employee.ManagementSystem.Core.Models.Employee
 
 @inject IEmployeeService Service
+@inject NavigationManager NavManager
 
 <h3>List of Employees</h3>
 <hr/>
@@ -33,15 +36,14 @@ else
             <tr>
                 <td>@employee.Name</td>
                 <td>@employee.Email</td>
-                <td>@employee.DateOfBirth.ToString()</td>
+                <td>@employee.DateOfBirth?.ToShortDateString()</td>
                 <td>@employee.Department.Name</td>
                 <td>
-                    <button class="btn btn-info">
-                        Edit
-                    </button>
-                    <button class="btn btn-danger">
-                        Remove
-                    </button>
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="Edit" />
+                    <RadzenButton 
+                        Text="Delete"
+                        ButtonStyle="ButtonStyle.Secondary" 
+                        Click="() => OpenDialog(employee)" />
                 </td>
             </tr>
         }
@@ -50,11 +52,47 @@ else
 }
 
 @code {
-    private IList<Employee> _employees;
+    private IList<Employee> _employees = null!;
+    private Employee _employeeSelected = new Employee();
 
     protected override async Task OnInitializedAsync()
     {
         _employees = await Service.GetAll();
+    }
+
+    protected override void OnInitialized()
+    {
+        DialogService.OnOpen += Open;
+        DialogService.OnClose += Close;
+    }
+
+    private void OpenDialog(Employee employee)
+    {
+        _employeeSelected = employee;
+        
+        DialogService.Confirm("Are you sure?", "Confirm",
+                new ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" });
+    }
+
+    public void Dispose()
+    {
+        // The DialogService is a singleton so it is advisable to unsubscribe.
+        DialogService.OnOpen -= Open;
+        DialogService.OnClose -= Close;
+    }
+    
+    void Open(string title, Type type, Dictionary<string, object> parameters, DialogOptions options)
+    {
+        Console.WriteLine("Dialog opened");
+    }
+
+    async void Close(dynamic result)
+    {
+        if ((bool)result)
+        {
+            Console.WriteLine(result);
+            await Service.Delete(_employeeSelected.Id);
+        }
     }
 
 }
