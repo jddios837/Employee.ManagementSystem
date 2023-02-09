@@ -39,7 +39,10 @@ else
                 <td>@employee.DateOfBirth?.ToShortDateString()</td>
                 <td>@employee.Department.Name</td>
                 <td>
-                    <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="Edit" />
+                    <RadzenButton 
+                        ButtonStyle="ButtonStyle.Primary" 
+                        Text="Edit"
+                        Click="() => GoEdit(employee.Id)"/>
                     <RadzenButton 
                         Text="Delete"
                         ButtonStyle="ButtonStyle.Secondary" 
@@ -88,11 +91,18 @@ else
 
     async void Close(dynamic result)
     {
-        if ((bool)result)
-        {
-            Console.WriteLine(result);
-            await Service.Delete(_employeeSelected.Id);
-        }
+        if (!(bool)result) return;
+        
+        Console.WriteLine(result);
+        var id = _employeeSelected.Id;
+        await Service.Delete(id);
+        _employees = await Service.GetAll();
+        await InvokeAsync(StateHasChanged);
+    }
+    
+    void GoEdit(int Id)
+    {
+        NavManager.NavigateTo($"/Employee/edit/{Id}");
     }
 
 }

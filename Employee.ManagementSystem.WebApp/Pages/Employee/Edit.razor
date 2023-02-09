@@ -1,13 +1,15 @@
-﻿@page "/Employee/New"
+﻿@page "/Employee/Edit/{Id:int}"
 @using global::Employee.ManagementSystem.Shared.Employee.InputModels
 @using global::Employee.ManagementSystem.Core.Models
 @using AutoMapper
+@using Microsoft.AspNetCore.WebUtilities
 
 @inject NavigationManager NavManager
 @inject IDepartmentService ServiceDeparment
 @inject IEmployeeService ServiceEmployee
+@inject NavigationManager NavigationHelper
 
-<h3>New</h3>
+<h3>Edit</h3>
 
 <div class="row">
     <div class="col">
@@ -16,24 +18,25 @@
         </NavLink>
     </div>
 </div>
-<EditForm Model="@CreateEmployeeInputModel" OnValidSubmit="SubmitValidForm">
+
+<EditForm Model="@UpdateEmployeeInputModel" OnValidSubmit="SubmitValidForm">
     <FluentValidationValidator/>
     <div class="form-group">
         <label class="col-form-label">Name:</label>
         <div class="col-md-6">
             <RadzenTextBox 
-                @bind-Value="@CreateEmployeeInputModel.Name" 
+                @bind-Value="@UpdateEmployeeInputModel.Name" 
                 Class="w-100" />
-            <ValidationMessage For="() => CreateEmployeeInputModel.Name"></ValidationMessage>
+            <ValidationMessage For="() => UpdateEmployeeInputModel.Name"></ValidationMessage>
         </div>
     </div>
     <div class="form-group">
         <label class="col-form-label">Email:</label>
         <div class="col-md-6">
             <RadzenTextBox 
-                @bind-Value="@CreateEmployeeInputModel.Email" 
+                @bind-Value="@UpdateEmployeeInputModel.Email" 
                 Class="w-100" />
-            <ValidationMessage For="() => CreateEmployeeInputModel.Email"></ValidationMessage>
+            <ValidationMessage For="() => UpdateEmployeeInputModel.Email"></ValidationMessage>
         </div>
     </div>
     <div class="form-group">
@@ -41,13 +44,13 @@
         <div class="col-md-6">
             <RadzenDatePicker 
                 TValue="DateTime" 
-                @bind-Value=@CreateEmployeeInputModel.DateOfBirth
+                @bind-Value=@UpdateEmployeeInputModel.DateOfBirth
                 Min="@MinDate"
                 Max="@MaxDate"
                 DateFormat="d"
                 ShowTime="false"
                 Class="w-100"/>
-            <ValidationMessage For="() => CreateEmployeeInputModel.DateOfBirth"></ValidationMessage>
+            <ValidationMessage For="() => UpdateEmployeeInputModel.DateOfBirth"></ValidationMessage>
         </div>
     </div>
     <div class="form-group">
@@ -55,25 +58,29 @@
         <div class="col-md-6">
             <RadzenDropDown 
                 AllowClear="true" 
-                @bind-Value="@CreateEmployeeInputModel.DepartmentId"
+                @bind-Value="@UpdateEmployeeInputModel.DepartmentId"
                 TValue="int" 
                 Class="w-100" 
                 Data=@_departments
                 TextProperty="Name" 
                 ValueProperty="Id"
                  />
-            <ValidationMessage For="() => CreateEmployeeInputModel.DepartmentId"></ValidationMessage>
+            <ValidationMessage For="() => UpdateEmployeeInputModel.DepartmentId"></ValidationMessage>
         </div>
     </div>
     <br/>
     <button class="btn btn-success" type="submit">Save</button>
 </EditForm>
 
+
 @code {
+    [Parameter]
+    public int Id { get; set; }
+
     [Inject]
     public IMapper Mapper { get; set; } = null!;
-
-    CreateEmployeeInputModel CreateEmployeeInputModel = new CreateEmployeeInputModel();
+    
+    UpdateEmployeeInputModel UpdateEmployeeInputModel = new UpdateEmployeeInputModel();
     IList<Department> _departments = new List<Department>();
     
     DateTime MinDate = new DateTime(1900,DateTime.Now.Month,01);
@@ -82,14 +89,14 @@
     protected override async Task OnInitializedAsync()
     {
         _departments = await ServiceDeparment.GetAll();
+
+        var employeeToUpdate = await ServiceEmployee.Get(Id);
+        UpdateEmployeeInputModel = Mapper.Map<UpdateEmployeeInputModel>(employeeToUpdate);
     }
 
-    async void SubmitValidForm()
+    void SubmitValidForm()
     {
-        Employee NewEmployee = new Employee();
-        Mapper.Map(CreateEmployeeInputModel, NewEmployee);
-        await ServiceEmployee.Create(NewEmployee);
         
-        NavManager.NavigateTo("/employees");
     }
+
 }

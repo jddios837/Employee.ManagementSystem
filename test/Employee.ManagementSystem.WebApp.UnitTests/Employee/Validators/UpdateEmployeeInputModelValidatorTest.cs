@@ -1,16 +1,16 @@
 ﻿namespace Employee.ManagementSystem.WebApp.UnitTests.Employee.Validators;
 
-public class CreateEmployeeInputModelValidatorTest
+public class UpdateEmployeeInputModelValidatorTest
 {
-    private readonly CreateEmployeeInputModelValidator _validator;
-    private readonly CreateEmployeeInputModel _model;
+    private readonly UpdateEmployeeInputModelValidator _validator;
+    private readonly UpdateEmployeeInputModel _model;
 
-    public CreateEmployeeInputModelValidatorTest()
+    public UpdateEmployeeInputModelValidatorTest()
     {
-        _validator = new CreateEmployeeInputModelValidator();
-        _model = new CreateEmployeeInputModel();
+        _validator = new UpdateEmployeeInputModelValidator();
+        _model = new UpdateEmployeeInputModel();
     }
-
+    
     [Fact]
     public void Should_Have_Name_Error_For_Empty_Name()
     {

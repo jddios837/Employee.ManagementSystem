@@ -3,20 +3,9 @@ using FluentValidation;
 
 namespace Employee.ManagementSystem.WebApp.Data.Employee.Validators;
 
-public class CreateEmployeeInputModelValidator : AbstractValidator<CreateEmployeeInputModel>
+public class CreateEmployeeInputModelValidator : EmployeeBaseValidator<CreateEmployeeInputModel>
 {
-    public CreateEmployeeInputModelValidator()
+    public CreateEmployeeInputModelValidator() : base()
     {
-        RuleFor(x => x.Name).Cascade(CascadeMode.Stop)
-            .NotEmpty()
-            .MaximumLength(100);
-        
-        RuleFor(x => x.Email).Cascade(CascadeMode.Stop)
-            .NotEmpty()
-            .EmailAddress();
-        
-        RuleFor(x => x.DepartmentId).Cascade(CascadeMode.Stop)
-            .NotEmpty()
-            .GreaterThanOrEqualTo(1);
     }
 }

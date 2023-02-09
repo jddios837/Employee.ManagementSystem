@@ -11,5 +11,15 @@ public class EmployeeMapperProfile : Profile
             .ForMember(dest => dest.Department,
                 opt =>
                     opt.MapFrom(src => new Department() { Id = src.DepartmentId }));
+        
+        CreateMap<UpdateEmployeeInputModel, Core.Models.Employee>()
+            .ForMember(dest => dest.Department,
+                opt =>
+                    opt.MapFrom(src => new Department() { Id = src.DepartmentId }));
+        
+        CreateMap<Core.Models.Employee, UpdateEmployeeInputModel>()
+            .ForMember(dest => dest.DepartmentId,
+                opt =>
+                    opt.MapFrom(src => src.Department.Id));
     }
 }

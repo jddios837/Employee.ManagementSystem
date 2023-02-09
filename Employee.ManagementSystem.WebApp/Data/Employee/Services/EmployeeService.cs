@@ -28,6 +28,13 @@ public class EmployeeService : IEmployeeService
         return await _context.SaveChangesAsync();
     }
 
+    public async Task<Core.Models.Employee?> Get(int employeeId)
+    {
+        return await _context.Employees
+            .Include(e => e.Department)
+            .FirstOrDefaultAsync(e => e.Id == employeeId);
+    }
+
     public async Task<Core.Models.Employee> Delete(int employeeId)
     {
         var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == employeeId)!;
