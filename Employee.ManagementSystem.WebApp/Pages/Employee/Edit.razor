@@ -94,9 +94,13 @@
         UpdateEmployeeInputModel = Mapper.Map<UpdateEmployeeInputModel>(employeeToUpdate);
     }
 
-    void SubmitValidForm()
+    async void SubmitValidForm()
     {
+        Employee updateEmployee = new Employee() { Id = Id};
+        Mapper.Map(UpdateEmployeeInputModel, updateEmployee);
+        await ServiceEmployee.Update(Id, updateEmployee);
         
+        NavManager.NavigateTo("/employees");
     }
 
 }

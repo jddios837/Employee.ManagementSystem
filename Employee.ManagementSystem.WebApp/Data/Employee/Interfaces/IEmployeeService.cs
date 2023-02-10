@@ -9,4 +9,6 @@ public interface IEmployeeService
     public Task<Core.Models.Employee?> Get(int employeeId);
 
     public Task<Core.Models.Employee> Delete(int employeeId);
+
+    public Task<Core.Models.Employee> Update(int id, Core.Models.Employee employee);
 }

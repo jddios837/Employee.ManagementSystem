@@ -1,9 +1,4 @@
-﻿using System.Linq.Dynamic.Core;
-using Employee.ManagementSystem.Data;
-using Employee.ManagementSystem.WebApp.Data.Employee.Interfaces;
-
-
-namespace Employee.ManagementSystem.WebApp.Data.Employee.Services;
+﻿namespace Employee.ManagementSystem.WebApp.Data.Employee.Services;
 
 public class EmployeeService : IEmployeeService
 {
@@ -43,6 +38,15 @@ public class EmployeeService : IEmployeeService
         _context.Employees.Remove(employee);
         await _context.SaveChangesAsync();
 
+        return employee;
+    }
+
+    public async Task<Core.Models.Employee> Update(int id, Core.Models.Employee employee)
+    {
+        var originalEmployee = await _context.Employees.FindAsync(id);
+        if (originalEmployee == null) return new Core.Models.Employee();
+        _context.Entry(originalEmployee).CurrentValues.SetValues(employee);
+        await _context.SaveChangesAsync();
         return employee;
     }
 }
