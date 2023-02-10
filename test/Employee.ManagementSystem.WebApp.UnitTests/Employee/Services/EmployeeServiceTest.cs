@@ -2,6 +2,7 @@
 using Employee.ManagementSystem.Data;
 using Employee.ManagementSystem.WebApp.Data.Employee.Interfaces;
 using Employee.ManagementSystem.WebApp.Data.Employee.Services;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
@@ -9,41 +10,65 @@ namespace Employee.ManagementSystem.WebApp.UnitTests.Employee.Services;
 
 public class EmployeeServiceTest
 {
-    private readonly Mock<IEmployeeService> _employeeServiceMock = new();
-    
-    public EmployeeServiceTest()
+    private async Task<EmployeeContext> GetDbContext()
     {
-        
-    }
+        var options = new DbContextOptionsBuilder<EmployeeContext>()
+            .UseInMemoryDatabase(databaseName: "test_db")
+            .Options;
 
-    [Fact]
-    public void Should_Get_Value()
-    {
-        _employeeServiceMock
-            .Setup(x => x.Get((It.IsAny<int>())))
-            .ReturnsAsync(new Core.Models.Employee());
-    }
+        var databaseContext = new EmployeeContext(options);
 
-    [Fact]
-    public async void Create_Employee_Via_Context()
-    {
-        var mockSet = new Mock<DbSet<Core.Models.Employee>>();
-        var mockContext = new Mock<EmployeeContext>();
-        mockContext.Setup(m => m.Employees)
-            .Returns(mockSet.Object);
-
-        var service = new EmployeeService(mockContext.Object);
-        Core.Models.Employee employee = new Core.Models.Employee
+        for (int i = 1; i < 5; i++)
         {
-            Id = 1,
+            databaseContext.Employees.Add(new Core.Models.Employee
+            {
+                Name = $"test{i}",
+                Email = $"test{i}@email.com",
+                DateOfBirth = DateTime.Now.Subtract(new TimeSpan(3650, 0, 0, 0)),
+                Department = new Department() { Id = i, Name = $"Department {i}" }
+            });
+            await databaseContext.SaveChangesAsync();
+        }
+
+        return databaseContext;
+    }
+
+    
+    [Fact]
+    public async void Should_Create_Employee()
+    {
+        //Arrange
+        var employee = new Core.Models.Employee
+        {
             Name = "test",
             Email = "",
             DateOfBirth = DateTime.Now.Subtract(new TimeSpan(3650, 0, 0, 0)),
             Department = new Department() { Id = 1, Name = "IT Deparment" }
         };
-        await service.Create(employee);
-        var expectedId = service.Get(employee.Id).Id;
+        var dbContext = await GetDbContext();
+        var employeeService = new EmployeeService(dbContext);
         
-        Assert.Equal(employee.Id, expectedId);
+        //Act
+        var result = await employeeService.Create(employee);
+        
+        //Assert
+        result.Should().BeGreaterOrEqualTo(1);
     }
+    
+    [Fact]
+    public async void Should_Get_Employee()
+    {
+        //Arrange
+        int employeeId = 3;
+        var dbContext = await GetDbContext();
+        var employeeService = new EmployeeService(dbContext);
+        
+        //Act
+        var result = await employeeService.Get(employeeId);
+        
+        //Assert
+        result.Should().NotBeNull();
+    }
+
+    
 }
