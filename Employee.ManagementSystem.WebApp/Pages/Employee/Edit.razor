@@ -2,12 +2,11 @@
 @using global::Employee.ManagementSystem.Shared.Employee.InputModels
 @using global::Employee.ManagementSystem.Core.Models
 @using AutoMapper
-@using Microsoft.AspNetCore.WebUtilities
 
 @inject NavigationManager NavManager
 @inject IDepartmentService ServiceDeparment
 @inject IEmployeeService ServiceEmployee
-@inject NavigationManager NavigationHelper
+@inject NotificationService NotificationService
 
 <h3>Edit</h3>
 
@@ -96,11 +95,21 @@
 
     async void SubmitValidForm()
     {
-        Employee updateEmployee = new Employee() { Id = Id};
+        Employee updateEmployee = new Employee() { Id = Id };
         Mapper.Map(UpdateEmployeeInputModel, updateEmployee);
-        await ServiceEmployee.Update(Id, updateEmployee);
-        
-        NavManager.NavigateTo("/employees");
-    }
+        var result = await ServiceEmployee.Update(Id, updateEmployee);
 
+        if (result.Id != Id)
+        {
+            Helper.ShowNotification(
+                "Email Error", 
+                "This email belong to another employee", 
+                NotificationSeverity.Error,
+                NotificationService);
+        }
+        else
+        {
+            NavManager.NavigateTo("/employees/edited");
+        }
+    }
 }

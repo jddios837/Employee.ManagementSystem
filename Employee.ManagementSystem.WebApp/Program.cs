@@ -5,10 +5,7 @@ using Employee.ManagementSystem.WebApp.Data;
 using Employee.ManagementSystem.WebApp.Data.Employee.Services;
 using Radzen;
 
-// using Syncfusion.Blazor;
-
 var builder = WebApplication.CreateBuilder(args);
-
 
 // Access Key Vault
 var credentialOptions = new DefaultAzureCredentialOptions()
@@ -28,11 +25,12 @@ builder.Services.AddDbContext<EmployeeContext>(options =>
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-// builder.Services.AddSyncfusionBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+// Blazor Radzen Examples
 builder.Services.AddScoped<DialogService>();
+builder.Services.AddScoped<NotificationService>();
 
 // Add Mappers
 var mappingConfig = new MapperConfiguration(mc =>

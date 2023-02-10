@@ -6,6 +6,7 @@
 @inject NavigationManager NavManager
 @inject IDepartmentService ServiceDeparment
 @inject IEmployeeService ServiceEmployee
+@inject NotificationService NotificationService
 
 <h3>New</h3>
 
@@ -88,8 +89,21 @@
     {
         Employee NewEmployee = new Employee();
         Mapper.Map(CreateEmployeeInputModel, NewEmployee);
-        await ServiceEmployee.Create(NewEmployee);
-        
-        NavManager.NavigateTo("/employees");
+        var result = await ServiceEmployee.Create(NewEmployee);
+
+        if (result == -1)
+        {
+            Helper.ShowNotification(
+                "Email Error", 
+                "This email belong to another employee", 
+                NotificationSeverity.Error,
+                NotificationService);
+        }
+        else
+        {
+            NavManager.NavigateTo("/employees/added");
+        }
     }
+
+    
 }

@@ -1,10 +1,8 @@
 ﻿using Employee.ManagementSystem.Core.Models;
 using Employee.ManagementSystem.Data;
-using Employee.ManagementSystem.WebApp.Data.Employee.Interfaces;
 using Employee.ManagementSystem.WebApp.Data.Employee.Services;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 
 namespace Employee.ManagementSystem.WebApp.UnitTests.Employee.Services;
 
@@ -18,18 +16,21 @@ public class EmployeeServiceTest
 
         var databaseContext = new EmployeeContext(options);
 
-        for (int i = 1; i < 5; i++)
+        if (await databaseContext.Employees.CountAsync() == 0)
         {
-            databaseContext.Employees.Add(new Core.Models.Employee
+            for (int i = 1; i < 5; i++)
             {
-                Name = $"test{i}",
-                Email = $"test{i}@email.com",
-                DateOfBirth = DateTime.Now.Subtract(new TimeSpan(3650, 0, 0, 0)),
-                Department = new Department() { Id = i, Name = $"Department {i}" }
-            });
-            await databaseContext.SaveChangesAsync();
+                databaseContext.Employees.Add(new Core.Models.Employee
+                {
+                    Name = $"test{i}",
+                    Email = $"test{i}@email.com",
+                    DateOfBirth = DateTime.Now.Subtract(new TimeSpan(3650, 0, 0, 0)),
+                    Department = new Department() { Id = i, Name = $"Department {i}" }
+                });
+                await databaseContext.SaveChangesAsync();
+            } 
         }
-
+        
         return databaseContext;
     }
 
@@ -56,6 +57,27 @@ public class EmployeeServiceTest
     }
     
     [Fact]
+    public async void Should_Not_Create_Employee()
+    {
+        //Arrange
+        var employee = new Core.Models.Employee
+        {
+            Name = "test1",
+            Email = "test1@email.com",
+            DateOfBirth = DateTime.Now.Subtract(new TimeSpan(3650, 0, 0, 0)),
+            Department = new Department() { Id = 1, Name = "IT Deparment" }
+        };
+        var dbContext = await GetDbContext();
+        var employeeService = new EmployeeService(dbContext);
+        
+        //Act
+        var result = await employeeService.Create(employee);
+        
+        //Assert
+        result.Should().Be(-1);
+    }
+    
+    [Fact]
     public async void Should_Get_Employee()
     {
         //Arrange
@@ -68,6 +90,64 @@ public class EmployeeServiceTest
         
         //Assert
         result.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async void Should_Update_Employee()
+    {
+        //Arrange
+        int employeeId = 3;
+        var dbContext = await GetDbContext();
+        var employeeService = new EmployeeService(dbContext);
+        var employee = await employeeService.Get(employeeId);
+        string nameExpected = "test3_mod";
+
+        //Act
+        if (employee != null)
+        {
+            employee.Name = nameExpected;
+            var result = await employeeService.Update(employeeId, employee);
+        
+            //Assert
+            result.Name.Should().Be(nameExpected);
+        }
+    }
+    
+    [Fact]
+    public async void Should_Not_Update_Employee()
+    {
+        //Arrange
+        int employeeId = 3;
+        var dbContext = await GetDbContext();
+        var employeeService = new EmployeeService(dbContext);
+        var employee = await employeeService.Get(employeeId);
+        string emailExpected = "test4@email.com";
+
+        //Act
+        if (employee != null)
+        {
+            employee.Email = emailExpected;
+            var result = await employeeService.Update(employeeId, employee);
+        
+            //Assert
+            result.Id.Should().NotBe(employeeId);
+        }
+    }
+
+    [Fact]
+    public async void Should_Remove_Employee()
+    {
+        //Arrange
+        int employeeId = 3;
+        var dbContext = await GetDbContext();
+        var employeeService = new EmployeeService(dbContext);
+        
+        //Act
+        await employeeService.Delete(employeeId);
+        var result = await employeeService.Get(employeeId);
+
+        //Assert
+        result.Should().BeNull();
     }
 
     

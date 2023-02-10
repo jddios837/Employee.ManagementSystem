@@ -1,16 +1,15 @@
-﻿@page "/employees"
+﻿@page "/"
+@page "/employees"
+@page "/employees/{action?}"
 @inject DialogService DialogService
 @implements IDisposable
 @using Employee = global::Employee.ManagementSystem.Core.Models.Employee
 
 @inject IEmployeeService Service
 @inject NavigationManager NavManager
+@inject NotificationService NotificationService
 
 <h3>List of Employees</h3>
-<hr/>
-<NavLink class="btn btn-primary" href="/employee/new">
-    New Employee
-</NavLink>
 <hr/>
 @if (_employees == null)
 {
@@ -20,6 +19,10 @@
 }
 else
 {
+    <NavLink class="btn btn-primary" href="/employee/new">
+        New Employee
+    </NavLink>
+    <hr/>
     <table class="table">
         <thead>
         <tr>
@@ -55,12 +58,31 @@ else
 }
 
 @code {
+    [Parameter]
+    public string? Action { get; set; }
+    
     private IList<Employee> _employees = null!;
     private Employee _employeeSelected = new Employee();
 
     protected override async Task OnInitializedAsync()
     {
         _employees = await Service.GetAll();
+
+        if (Action == "added")
+        {
+            Helper.ShowNotification(
+                "Success", 
+                "A new employee was added correctly", 
+                NotificationSeverity.Success,
+                NotificationService);
+        } else if (Action == "edited")
+        {
+            Helper.ShowNotification(
+                "Success", 
+                "A employee was updated correctly", 
+                NotificationSeverity.Success,
+                NotificationService);
+        }
     }
 
     protected override void OnInitialized()
@@ -98,11 +120,15 @@ else
         await Service.Delete(id);
         _employees = await Service.GetAll();
         await InvokeAsync(StateHasChanged);
+        Helper.ShowNotification(
+            "Success", 
+            "A employee was deleted correctly", 
+            NotificationSeverity.Success,
+            NotificationService);
     }
     
     void GoEdit(int Id)
     {
         NavManager.NavigateTo($"/Employee/edit/{Id}");
     }
-
 }

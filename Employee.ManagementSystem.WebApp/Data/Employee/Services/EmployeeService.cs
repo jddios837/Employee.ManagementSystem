@@ -19,6 +19,10 @@ public class EmployeeService : IEmployeeService
         employee.Department = _context.Departments
             .FirstOrDefault(e => e.Id == employee.Department.Id) ?? 
                               throw new InvalidOperationException();
+        // check if email exist
+        if (await _context.Employees.FirstOrDefaultAsync(e => e.Email == employee.Email)! is { }) 
+            return -1;
+        
         _context.Employees.Add(employee);
         return await _context.SaveChangesAsync();
     }
@@ -45,6 +49,11 @@ public class EmployeeService : IEmployeeService
     {
         var originalEmployee = await _context.Employees.FindAsync(id);
         if (originalEmployee == null) return new Core.Models.Employee();
+
+        var existEmailEmployee = await _context.Employees
+            .FirstOrDefaultAsync(e => e.Email == employee.Email && e.Id != id);
+        if (existEmailEmployee != null) return existEmailEmployee;
+        
         _context.Entry(originalEmployee).CurrentValues.SetValues(employee);
         await _context.SaveChangesAsync();
         return employee;
