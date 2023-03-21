@@ -16,7 +16,7 @@ public class EmployeeServiceTest
 
         var databaseContext = new EmployeeContext(options);
 
-        if (await databaseContext.Employees.CountAsync() == 0)
+        if (await databaseContext.Employees.CountAsync() == 0) 
         {
             for (int i = 1; i < 5; i++)
             {
@@ -90,6 +90,7 @@ public class EmployeeServiceTest
         
         //Assert
         result.Should().NotBeNull();
+        result.Should().BeOfType<Core.Models.Employee>();
     }
 
     [Fact]
@@ -103,14 +104,12 @@ public class EmployeeServiceTest
         string nameExpected = "test3_mod";
 
         //Act
-        if (employee != null)
-        {
-            employee.Name = nameExpected;
-            var result = await employeeService.Update(employeeId, employee);
+        if (employee == null) return;
+        employee.Name = nameExpected;
+        var result = await employeeService.Update(employeeId, employee);
         
-            //Assert
-            result.Name.Should().Be(nameExpected);
-        }
+        //Assert
+        result.Name.Should().Be(nameExpected);
     }
     
     [Fact]
